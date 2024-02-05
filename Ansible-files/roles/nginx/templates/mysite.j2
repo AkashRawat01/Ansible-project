@@ -1,0 +1,21 @@
+# This configuraation is for {{ ansible_facts['nodename'] }}
+
+upstream webservers {
+    {% for host in groups['webservers'] %}
+       server {{ hostvars[host]['ansible_facts']['nodename'] }}:{{ http_port }};
+    {% endfor %}
+
+    #server {{ hostvars['web01']['ansible_facts']['nodename'] }}:8000;
+    #server {{ hostvars['web02']['ansible_facts']['nodename'] }}:8000;
+
+    #server web01:8000;
+    #server web02:8000;
+}
+
+server {
+    listen  80;
+    
+    location / {
+        proxy_pass http://webservers;
+        }
+}
